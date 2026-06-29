@@ -82,7 +82,7 @@ Create a new parser; `appname` and `appversion` are required.
 #### `clop::subparser name parser positional_count shorthelp longhelp positional_help`
 
 Create a subparser; the first two arguments are required. The name is the
-subcommand's name and the parser should be the main parser (created with
+subcommand’s name and the parser should be the main parser (created with
 `clop::Parser new`).
 
 ### Configure a Parser or Subparser
@@ -96,11 +96,11 @@ For example, the `efind.tcl` tool uses the names `WHAT` and `DIR`.
 
 #### `$parser set_positional_line line`
 
-In some situations changing the positional argument names isn't sufficient
+In some situations changing the positional argument names isn’t sufficient
 for customizing the positional arguments. In these cases the positional
 arguments can be represented by setting the line to output.
 
-For example, the `str` tool's `diff` subcommand uses the positional line:  
+For example, the `str` tool’s `diff` subcommand uses the positional line:  
 `"%b<@GID1>%! %I%g\[@GID2\]%! %b<FILE>%!"`
 
 ### Add Options to a Parser or Subparser
@@ -127,13 +127,13 @@ Add a new Boolean option; all arguments are required.
 #### `$parser new_opt shortname longname defvalue help repeatable argname`
 
 Add a new option; the first four arguments are required. Repeatable defaults
-to `0` (no repeats allowed) and `argname` to `""` so the argument's name is
+to `0` (no repeats allowed) and `argname` to `""` so the argument’s name is
 the same as the `longname` (if nonempty) otherwise the `shortname`.
 
 #### `$parser new_hidden shortname longname defvalue help repeatable argname`
 
 Add a new hidden option; the first four arguments are required. Repeatable
-defaults to `0` (no repeats allowed) and `argname` to `""` so the argument's
+defaults to `0` (no repeats allowed) and `argname` to `""` so the argument’s
 name is the same as the `longname` (if nonempty) otherwise the `shortname`.
 
 #### `$parser new_subcommand shortname longname subparser help`
