@@ -1,0 +1,10 @@
+usage: str status [OPTIONS] 
+
+Status reports any unstored unignored nonempty files and whether updates
+or cleaning are needed. [Default action for str with no
+arguments.]
+
+OPTIONS:
+  -v or --verbose  Show the name of every new/changed file [default
+                   just show counts].
+  -h or --help     Show status help and quit.

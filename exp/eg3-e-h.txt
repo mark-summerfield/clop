@@ -1,0 +1,13 @@
+usage: str extract [OPTIONS] [@GID] <FILE1> … <FILEn>
+
+Extract the given filenames at the generation, e.g., filename.ext
+will be extracted as filename@gid.ext, etc.
+
+POSITIONALS: 
+  @GID is the generation to extract [default current]; FILE1 …
+  FILEn are the files to extract.
+
+OPTIONS:
+  -v or --verbose  Show the name of every extractd file [default just
+                   show counts].
+  -h or --help     Show extract help and quit.

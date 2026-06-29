@@ -1,0 +1,14 @@
+usage: str add [OPTIONS] [FILE1 [FILE2 … [FILEn]]]
+
+Add the given files and the files in the given folders to the store. If
+none given then adds the files in the current folder and its immediate
+subfolders, except for those ignored or empty, creating the store if
+necessary.
+
+POSITIONALS: 
+  The given files and folders to add.
+
+OPTIONS:
+  -v or --verbose  Show the name of every added file [default just
+                   show counts].
+  -h or --help     Show add help and quit.

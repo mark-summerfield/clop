@@ -1,0 +1,309 @@
+—————— test1 ——————
+argv: -V
+1.0.0
+—————— exit 0 ——————
+—————— test2 ——————
+argv: --version
+1.0.0
+—————— exit 0 ——————
+—————— test3 ——————
+argv: -h
+usage: comparepdf.tcl [OPTIONS] <FILE1> <FILE2>
+
+Compare two PDFs texts’.
+
+POSITIONALS: 
+
+OPTIONS:
+  -r or --report REPORT                      Report name (.pdf or .csv)
+                                             [default is based on input
+                                             PDFs’ names]
+  -s or --show                               Show report in default PDF
+                                             viewer (only if report is a
+                                             .pdf) [default: don’t show]
+  -T or --margin-top MARGIN-TOP              Set the top margin above
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -B or --margin-bottom MARGIN-BOTTOM        Set the bottom margin below
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -L or --margin-left MARGIN-LEFT            Set the left margin left of
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -R or --margin-right MARGIN-RIGHT          Set the right margin right
+                                             of which text is ignored
+                                             [default 0; 0-144]
+        --pdftotext PDFTOTEXT                Set the pdftotext
+                                             executable’s path [default
+                                             use system version]
+        --algorithm ALGORITHM                Set the algorithm [default
+                                             fast; valid: fast normal
+                                             special]
+        --line-tolerance LINE-TOLERANCE      Set line-tolerance [default
+                                             10; 2-22]
+        --ignore-hyphens                     Treat every hyphen as a
+                                             space; [default recognize
+                                             hyphens]
+        --distinct-hyphens                   Distinguish different types
+                                             of hyphen [default
+                                             normalize them]
+        --distinct-ligatures                 Distinguish ligatures
+                                             [default normalize them,
+                                             e.g., treat ﬁ as fi, ﬂ as
+                                             fl, and so on]
+        --change-bar-color CHANGE-BAR-COLOR  Change bar color; set to
+                                             #FFFFFF (white) for no
+                                             change bar [default
+                                             #0000FF]
+        --transparency TRANSPARENCY          Transparency percentage
+                                             [default 80; 60-90]
+        --margin-color MARGIN-COLOR          Margin color [default
+                                             #00FF00]
+        --delete-color DELETE-COLOR          Delete color [default
+                                             #FF0000]
+        --insert-color INSERT-COLOR          Insert color [default
+                                             #00FFFF]
+        --replace-color REPLACE-COLOR        Replace color [default
+                                             #FF00FF]
+  -v or --verbose                            Show progress [default
+                                             don’t show progress]
+  -V or --version                            Show version and quit.
+  -h or --help                               Show this help and quit.
+
+The unit used throughout is the point (1/72"). For colors use HTML-style
+hex numbers.
+—————— exit 0 ——————
+—————— test4 ——————
+argv: --help
+usage: comparepdf.tcl [OPTIONS] <FILE1> <FILE2>
+
+Compare two PDFs texts’.
+
+POSITIONALS: 
+
+OPTIONS:
+  -r or --report REPORT                      Report name (.pdf or .csv)
+                                             [default is based on input
+                                             PDFs’ names]
+  -s or --show                               Show report in default PDF
+                                             viewer (only if report is a
+                                             .pdf) [default: don’t show]
+  -T or --margin-top MARGIN-TOP              Set the top margin above
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -B or --margin-bottom MARGIN-BOTTOM        Set the bottom margin below
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -L or --margin-left MARGIN-LEFT            Set the left margin left of
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -R or --margin-right MARGIN-RIGHT          Set the right margin right
+                                             of which text is ignored
+                                             [default 0; 0-144]
+        --pdftotext PDFTOTEXT                Set the pdftotext
+                                             executable’s path [default
+                                             use system version]
+        --algorithm ALGORITHM                Set the algorithm [default
+                                             fast; valid: fast normal
+                                             special]
+        --line-tolerance LINE-TOLERANCE      Set line-tolerance [default
+                                             10; 2-22]
+        --ignore-hyphens                     Treat every hyphen as a
+                                             space; [default recognize
+                                             hyphens]
+        --distinct-hyphens                   Distinguish different types
+                                             of hyphen [default
+                                             normalize them]
+        --distinct-ligatures                 Distinguish ligatures
+                                             [default normalize them,
+                                             e.g., treat ﬁ as fi, ﬂ as
+                                             fl, and so on]
+        --change-bar-color CHANGE-BAR-COLOR  Change bar color; set to
+                                             #FFFFFF (white) for no
+                                             change bar [default
+                                             #0000FF]
+        --transparency TRANSPARENCY          Transparency percentage
+                                             [default 80; 60-90]
+        --margin-color MARGIN-COLOR          Margin color [default
+                                             #00FF00]
+        --delete-color DELETE-COLOR          Delete color [default
+                                             #FF0000]
+        --insert-color INSERT-COLOR          Insert color [default
+                                             #00FFFF]
+        --replace-color REPLACE-COLOR        Replace color [default
+                                             #FF00FF]
+  -v or --verbose                            Show progress [default
+                                             don’t show progress]
+  -V or --version                            Show version and quit.
+  -h or --help                               Show this help and quit.
+
+The unit used throughout is the point (1/72"). For colors use HTML-style
+hex numbers.
+—————— exit 0 ——————
+—————— test5 ——————
+argv: -DsT72 -v -h --algorithm normal --transparency 90 --margin-color=#A1B2C3 --delete-color #D4E5F6 ~/commercial/pdfs/boson1.pdf ~/commercial/pdfs/boson1.pdf
+usage: comparepdf.tcl [OPTIONS] <FILE1> <FILE2>
+
+Compare two PDFs texts’.
+
+POSITIONALS: 
+
+OPTIONS:
+  -r or --report REPORT                      Report name (.pdf or .csv)
+                                             [default is based on input
+                                             PDFs’ names]
+  -s or --show                               Show report in default PDF
+                                             viewer (only if report is a
+                                             .pdf) [default: don’t show]
+  -T or --margin-top MARGIN-TOP              Set the top margin above
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -B or --margin-bottom MARGIN-BOTTOM        Set the bottom margin below
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -L or --margin-left MARGIN-LEFT            Set the left margin left of
+                                             which text is ignored
+                                             [default 0; 0-144]
+  -R or --margin-right MARGIN-RIGHT          Set the right margin right
+                                             of which text is ignored
+                                             [default 0; 0-144]
+        --pdftotext PDFTOTEXT                Set the pdftotext
+                                             executable’s path [default
+                                             use system version]
+        --algorithm ALGORITHM                Set the algorithm [default
+                                             fast; valid: fast normal
+                                             special]
+        --line-tolerance LINE-TOLERANCE      Set line-tolerance [default
+                                             10; 2-22]
+        --ignore-hyphens                     Treat every hyphen as a
+                                             space; [default recognize
+                                             hyphens]
+        --distinct-hyphens                   Distinguish different types
+                                             of hyphen [default
+                                             normalize them]
+        --distinct-ligatures                 Distinguish ligatures
+                                             [default normalize them,
+                                             e.g., treat ﬁ as fi, ﬂ as
+                                             fl, and so on]
+        --change-bar-color CHANGE-BAR-COLOR  Change bar color; set to
+                                             #FFFFFF (white) for no
+                                             change bar [default
+                                             #0000FF]
+        --transparency TRANSPARENCY          Transparency percentage
+                                             [default 80; 60-90]
+        --margin-color MARGIN-COLOR          Margin color [default
+                                             #00FF00]
+        --delete-color DELETE-COLOR          Delete color [default
+                                             #FF0000]
+        --insert-color INSERT-COLOR          Insert color [default
+                                             #00FFFF]
+        --replace-color REPLACE-COLOR        Replace color [default
+                                             #FF00FF]
+  -v or --verbose                            Show progress [default
+                                             don’t show progress]
+  -V or --version                            Show version and quit.
+  -h or --help                               Show this help and quit.
+
+The unit used throughout is the point (1/72"). For colors use HTML-style
+hex numbers.
+—————— exit 0 ——————
+—————— test6 ——————
+argv: -D -s -T72 -v -V --algorithm normal --transparency 90 --margin-color=#A1B2C3 --delete-color #D4E5F6 ~/commercial/pdfs/boson1.pdf ~/commercial/pdfs/boson1.pdf
+1.0.0
+—————— exit 0 ——————
+—————— test7 ——————
+argv: -D -s -T72 -v --algorithm normal --transparency 90 --margin-color=#A1B2C3 --delete-color #D4E5F6 ~/commercial/pdfs/boson1.pdf ~/commercial/pdfs/boson1.pdf
+opts=
+  *: «»
+  algorithm: «normal»
+  change-bar-color: «#0000FF»
+  debug: «1»
+  delete-color: «#D4E5F6»
+  distinct-hyphens: «0»
+  distinct-ligatures: «0»
+  ignore-hyphens: «0»
+  insert-color: «#00FFFF»
+  line-tolerance: «10»
+  margin-bottom: «0»
+  margin-color: «#A1B2C3»
+  margin-left: «0»
+  margin-right: «0»
+  margin-top: «72»
+  pdftotext: «»
+  replace-color: «#FF00FF»
+  report: «»
+  show: «1»
+  transparency: «90»
+  verbose: «1»
+  %: [«~/commercial/pdfs/boson1.pdf» «~/commercial/pdfs/boson1.pdf»]
+—————— test8 ——————
+argv: -v --algorithm normal --transparency 90 --margin-color=#A1B2C3 --delete-color #D4E5F6 -DsT72 ~/commercial/pdfs/boson1.pdf ~/commercial/pdfs/boson1.pdf
+opts=
+  *: «»
+  algorithm: «normal»
+  change-bar-color: «#0000FF»
+  debug: «1»
+  delete-color: «#D4E5F6»
+  distinct-hyphens: «0»
+  distinct-ligatures: «0»
+  ignore-hyphens: «0»
+  insert-color: «#00FFFF»
+  line-tolerance: «10»
+  margin-bottom: «0»
+  margin-color: «#A1B2C3»
+  margin-left: «0»
+  margin-right: «0»
+  margin-top: «72»
+  pdftotext: «»
+  replace-color: «#FF00FF»
+  report: «»
+  show: «1»
+  transparency: «90»
+  verbose: «1»
+  %: [«~/commercial/pdfs/boson1.pdf» «~/commercial/pdfs/boson1.pdf»]
+—————— test9 ——————
+argv: -DsT72 -v --algorithm normal --transparency 90 --margin-color=#A1B2C3 --delete-color #D4E5F6 ~/commercial/pdfs/boson1.pdf ~/commercial/pdfs/boson1.pdf
+opts=
+  *: «»
+  algorithm: «normal»
+  change-bar-color: «#0000FF»
+  debug: «1»
+  delete-color: «#D4E5F6»
+  distinct-hyphens: «0»
+  distinct-ligatures: «0»
+  ignore-hyphens: «0»
+  insert-color: «#00FFFF»
+  line-tolerance: «10»
+  margin-bottom: «0»
+  margin-color: «#A1B2C3»
+  margin-left: «0»
+  margin-right: «0»
+  margin-top: «72»
+  pdftotext: «»
+  replace-color: «#FF00FF»
+  report: «»
+  show: «1»
+  transparency: «90»
+  verbose: «1»
+  %: [«~/commercial/pdfs/boson1.pdf» «~/commercial/pdfs/boson1.pdf»]
+—————— test10 ——————
+argv: -cDi -x README -x README.md -x README.txt -H
+opts=
+  *: «»
+  casesensitive: «1»
+  debug: «1»
+  exclude: «README README.md README.txt»
+  hidden: «1»
+  ignore: «1»
+  verbose: «0»
+  %: []
+—————— test11 ——————
+usage: pos-0 [OPTIONS] 
+
+The help text
+
+OPTIONS:
+  -v or --verbose  Show progress [default don’t show]
+  -V or --version  Show version and quit.
+  -h or --help     Show this help and quit.
+—————— exit 0 ——————

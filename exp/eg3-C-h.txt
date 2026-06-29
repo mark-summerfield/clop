@@ -1,0 +1,7 @@
+usage: str clean [OPTIONS] 
+
+Cleans the store by deleting empty generations, i.e., those without any
+changes.
+
+OPTIONS:
+  -h or --help  Show clean help and quit.

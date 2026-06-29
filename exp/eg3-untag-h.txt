@@ -1,0 +1,9 @@
+usage: str untag [OPTIONS] [GID]
+
+Untag the current or given generation.
+
+POSITIONALS: 
+  @GID is the generation to untag [default current].
+
+OPTIONS:
+  -h or --help  Show untag help and quit.

@@ -1,0 +1,6 @@
+usage: str untracked [OPTIONS] 
+
+Print any untracked files.
+
+OPTIONS:
+  -h or --help  Show untracked help and quit.

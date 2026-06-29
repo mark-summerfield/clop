@@ -1,0 +1,10 @@
+usage: str tag [OPTIONS] <@GID> <TAG>
+
+Set the tag for the current or given generation to the given tag.
+
+POSITIONALS: 
+  @GID is the generation to tag [default current]. For the TAG
+  use quotes if multiple words.
+
+OPTIONS:
+  -h or --help  Show tag help and quit.

@@ -1,0 +1,16 @@
+usage: str diff [OPTIONS] <@GID1> [@GID2] <FILE>
+
+Diff the filename at @GID1 against the one in the current folder, or
+against the one stored at @GID2 if given; shows the entire file,
+unless quiet is specified when only differences and context lines are
+shown.
+
+POSITIONALS: 
+  @GID1 is the first generation; @GID2 is the second
+  generation [default current]; FILE is the file to diff at these
+  generations.
+
+OPTIONS:
+  -q or --quiet  Show the differences and some context only [default
+                 show the whole file].
+  -h or --help   Show diff help and quit.

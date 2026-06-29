@@ -1,0 +1,9 @@
+usage: str history [OPTIONS] <FILE>
+
+Print the given file’s history.
+
+POSITIONALS: 
+  The file to print the history of.
+
+OPTIONS:
+  -h or --help  Show history help and quit.

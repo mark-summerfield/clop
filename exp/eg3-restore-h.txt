@@ -1,0 +1,10 @@
+usage: str restore [OPTIONS] <FILE1> [FILE2 … [FILEn]]
+
+Restore the specified files by overwriting those on disk with
+those from the store.
+
+POSITIONALS: 
+  The files to restore.
+
+OPTIONS:
+  -h or --help  Show restore help and quit.

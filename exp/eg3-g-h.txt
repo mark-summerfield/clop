@@ -1,0 +1,7 @@
+usage: str generations [OPTIONS] 
+
+Print the generations (and all their filenames if --full).
+
+OPTIONS:
+  -f or --full  Show filenames.
+  -h or --help  Show generations help and quit.

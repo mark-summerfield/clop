@@ -1,0 +1,9 @@
+usage: str unignore [OPTIONS] <ITEM1> [ITEM2 … [ITEMn]]
+
+Remove the given filenames, folders, and globs from the ignore list.
+
+POSITIONALS: 
+  Each ITEM is a file or a folder or a glob pattern.
+
+OPTIONS:
+  -h or --help  Show unignore help and quit.

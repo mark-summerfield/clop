@@ -1,0 +1,6 @@
+usage: str gui [OPTIONS] 
+
+Start the gui.
+
+OPTIONS:
+  -h or --help  Show gui help and quit.

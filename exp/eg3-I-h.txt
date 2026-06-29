@@ -1,0 +1,6 @@
+usage: str ignores [OPTIONS] 
+
+Print the ignore list.
+
+OPTIONS:
+  -h or --help  Show ignores help and quit.

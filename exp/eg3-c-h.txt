@@ -1,0 +1,12 @@
+usage: str copy [OPTIONS] [@GID] <FOLDER>
+
+Copy all the files at the given or current generation into the given
+folder (which must not exist).
+
+POSITIONALS: 
+  @GID is the generation to copy from [default current];
+  FOLDER is the folder to create and copy into.
+
+OPTIONS:
+  -v or --verbose  Show the name of every copied file.
+  -h or --help     Show copy help and quit.

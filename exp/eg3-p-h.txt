@@ -1,0 +1,11 @@
+usage: str print [OPTIONS] [@GID] <FILE>
+
+Print the given file from the store at the given (or current if not
+specified) generation. (Should only be used for plain text files!).
+
+POSITIONALS: 
+  @GID is the generation to print from [default current]; FILE
+  is the file to print.
+
+OPTIONS:
+  -h or --help  Show print help and quit.

@@ -1,0 +1,10 @@
+usage: str purge [OPTIONS] <FILE>
+
+Purge the given file from the store by deleting every copy of it at
+every generation.
+
+POSITIONALS: 
+  The file to purge from the store.
+
+OPTIONS:
+  -h or --help  Show purge help and quit.

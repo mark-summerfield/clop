@@ -1,0 +1,52 @@
+usage: comparepdf.tcl [OPTIONS] <PDF1> <PDF2>
+
+Compare two PDF files’ texts’.
+
+POSITIONALS: PDF1 and PDF2 are the two PDF files to compare.
+
+OPTIONS:
+  -r or --report REPORT           Report name (.pdf or .csv) [default
+                                  based on input PDFs’ names].
+  -s or --show                    Show report in default PDF viewer
+                                  (only if report is a .pdf) [default:
+                                  don’t show].
+  -T or --margin-top MARGIN       Set the top margin above which text
+                                  is ignored [default 0; 0-144].
+  -B or --margin-bottom MARGIN    Set the bottom margin below which
+                                  text is ignored [default 0;
+                                  0-144].
+  -L or --margin-left MARGIN      Set the left margin left of which
+                                  text is ignored [default 0;
+                                  0-144].
+  -R or --margin-right MARGIN     Set the right margin right of which
+                                  text is ignored [default 0;
+                                  0-144].
+        --pdftotext EXE           Set the pdftotext executable’s path
+                                  [default system version].
+        --algorithm ALGORITHM     Set the algorithm [default fast;
+                                  valid: fast normal special].
+        --line-tolerance POINTS   Set line-tolerance [default 10;
+                                  2-22].
+        --ignore-hyphens          Treat every hyphen as a space;
+                                  [default recognize hyphens].
+        --distinct-hyphens        Distinguish different types of hyphen
+                                  [default normalize hyphens].
+        --distinct-ligatures      Distinguish ligatures [default
+                                  normalize ligatures, e.g., treat ﬁ
+                                  as fi, ﬂ as fl, and so on].
+        --change-bar-color COLOR  Change bar color; set to
+                                  #FFFFFF (white) for no
+                                  change bar [default #0000FF].
+        --transparency PERCENT    Transparency percentage [default 80;
+                                  60-90].
+        --margin-color COLOR      Margin color [default #00FF00].
+        --delete-color COLOR      Delete color [default #FF0000].
+        --insert-color COLOR      Insert color [default #00FFFF].
+        --replace-color COLOR     Replace color [default #FF00FF].
+  -v or --verbose                 Show progress [default don’t show
+                                  progress].
+  -V or --version                 Show version and quit.
+  -h or --help                    Show this help and quit.
+
+The unit used throughout is the point (1/72"). For colors use HTML-style
+hex numbers.

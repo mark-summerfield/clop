@@ -1,0 +1,24 @@
+usage: efind [OPTIONS] <WHAT> [DIR1 … [DIRn]]
+
+Searches for files that match WHAT in . or in any specified folders,
+including recursively into subfolders. WHAT is either .ext or text
+or integer, e.g., .tcl or .py; or readme. For .tcl searches
+*.{tcl,tm,tk}; for .py *.{py,pyw}; for .c *.{c,h}; for .cpp or .c++
+*.{h,hxx,hpp,h++,C,cc,cp,cxx,cpp,CPP,c++}; for integer means files
+modified since that many days ago, 0 being today, 1 yesterday, etc;
+others as is.
+
+POSITIONALS:
+  WHAT is what to search for; DIR1 DIR2 … are the folders to
+  search [default .].
+
+OPTIONS:
+  -c or --casesensitive  Respect case [default ignore case].
+  -i or --ignore         Ignore what’s listed in ~/.config/efind.lst.
+  -x or --exclude EXCL   Exclude the given file/folder; this option
+                         may be repeated.
+  -H or --hidden         Search hidden files and folders [default
+                         ignore hiddens].
+  -v or --verbose        Show progress [default don’t show progress].
+  -V or --version        Show version and quit.
+  -h or --help           Show this help and quit.

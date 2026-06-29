@@ -1,0 +1,13 @@
+clop-2.tm
+
+tclop.tcl
+tclop-pos.tcl # positionals
+eg1.tcl # comparepdf
+eg2.tcl # efind
+eg3.tcl # str: s u a e p c d f g G H
+
+st.sh
+
+README.md
+
+# vim: syn=yaml

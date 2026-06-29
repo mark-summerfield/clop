@@ -1,0 +1,9 @@
+usage: str filenames [OPTIONS] [@GID]
+
+List the tracked files.
+
+POSITIONALS: 
+  @GID is the generation to list [default current].
+
+OPTIONS:
+  -h or --help  Show filenames help and quit.

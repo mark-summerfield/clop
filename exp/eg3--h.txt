@@ -1,0 +1,44 @@
+usage: str SUBCOMMAND [OPTIONS] …
+
+Stores generational copies of specified files (excluding those
+explicitly ignored) in .dirname.str. (For a GUI run
+store.)
+
+SUBCOMMANDS:
+s or status       Show the store’s status.
+u or update       Create a new generation with an optional tag.
+a or add          Add the addable or the given files and folders.
+e or extract      Extract the specified files.
+p or print        Print the given file.
+c or copy         Copy a generation to the given folder.
+d or diff         Diff the given file.
+f or filenames    List the tracked files.
+g or generations  Print the generations.
+G or gui          Start the gui.
+H or history      Print the given file’s history.
+i or ignore       Add the given files/folders/globs to the ignore list.
+I or ignores      Print the ignore list.
+U or unignore     Remove the given files/folders/globs from the ignore
+                  list.
+t or tag          Set the tag for the current or given generation to the
+                  given tag.
+untag             Untag the current or given generation.
+T or untracked    Print any untracked files.
+restore           Restore the specified files overwriting those on
+                  disk!
+C or clean        Cleans the store by deleting empty generations.
+purge             Purge the given file from the store.
+h or help         Show full help.
+
+OPTIONS:
+  -v or --version  Show version and quit.
+  -h or --help     Show this help and quit. Use h or help for
+                   full help.
+
+@GID — @-prefixed generation number or tag name, (e.g., @28,
+@alpha1); if unspecified, the current generation is assumed.
+GLOB — when using globs for ignore or unignore use quotes to avoid
+shell expansion of glob characters (e.g., '*.o'). Subcommands that
+print output to stdour unless redirected by the shell. For help on a
+specific subcommand follow the subcommand with -h or --help or
+just use h or help for full help.
