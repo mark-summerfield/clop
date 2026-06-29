@@ -13,7 +13,12 @@ clc -s -l tcl
 
 TOTAL=0
 OK=0
-diff_files() { ((TOTAL++)) ; if diff -q "$1" "$2" ; then ((OK++)) fi }
+diff_files() {
+    ((TOTAL++))
+    if diff -q "$1" "$2" ; then
+	((OK++))
+    fi
+}
 
 ./tclop.tcl > /tmp/tclop.txt
 diff_files exp/tclop.txt /tmp/tclop.txt
