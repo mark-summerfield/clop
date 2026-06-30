@@ -37,7 +37,7 @@ oo::class create clop::Opt { ;# "private" class for use by Parser class
     variable LongName
     variable ArgName    ;# subcommand always empty
     variable Kind
-    variable DefValue   ;# subcommand: holds a parser
+    variable DefValue   ;# subcommand: holds a (sub)parser
     variable Value      ;# subcommand: always unset
     variable Help
     variable Hidden     ;# subcommand: always 0
@@ -317,12 +317,10 @@ oo::define clop::Parser method on_help {{full 0}} {
 }
 
 oo::define clop::Parser method GetPositionals {{subparser {}}} {
-    if {$subparser ne {}} {
-        set positional_line [$subparser positional_line]
-    } else {
-        set positional_line $PositionalLine
+    if {[set positional_line [expr {$subparser eq {} ? $PositionalLine \
+                                : [$subparser positional_line]}]] ne ""} {
+        return [clop::Unescape $positional_line]
     }
-    if {$positional_line ne ""} { return [clop::Unescape $positional_line] }
     const I $::clop::ITALIC
     const G $::clop::GREEN
     const L $::clop::BLUE
