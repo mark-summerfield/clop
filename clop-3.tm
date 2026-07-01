@@ -32,6 +32,10 @@ namespace eval clop {
 
 # Kind: B=bool D=debug h=help H=full help (subcommand only) N=normal
 #       S=subcommand V=version
+# Validate: a function that accepts a single arg (the given Value) and
+#   which must return either an error message or "".
+#   If there's no given Validate function or if Value (i.e., the default
+#   is used), the validate method returns "". Only used for N options.
 oo::class create clop::Opt { ;# "private" class for use by Parser class
     variable ShortName
     variable LongName
@@ -42,10 +46,12 @@ oo::class create clop::Opt { ;# "private" class for use by Parser class
     variable Help
     variable Hidden     ;# subcommand: always 0
     variable Repeatable ;# subcommand: always 0
+    variable Validate   ;# subcommand: always {}
 }
 
 oo::define clop::Opt constructor {{shortname ""} {longname ""} {kind N} \
-        {defvalue ""} {help ""} {repeatable 0} {hidden 0} {argname ""}} {
+        {defvalue ""} {help ""} {repeatable 0} {hidden 0} {argname ""} \
+        {validate {}}} {
     set ShortName $shortname
     set LongName $longname
     set ArgName $argname
@@ -55,6 +61,7 @@ oo::define clop::Opt constructor {{shortname ""} {longname ""} {kind N} \
     set Help $help
     set Repeatable $repeatable
     set Hidden $hidden
+    set Validate $validate
 }
 
 oo::define clop::Opt method shortname {} { return $ShortName }
@@ -84,7 +91,13 @@ oo::define clop::Opt method is_hidden {} { return $Hidden }
 
 oo::define clop::Opt method is_subcommand {} { expr {$Kind in {H S}} }
 
+oo::define clop::Opt method validate value {
+    if {$Validate eq {}} { return "" }
+    {*}$Validate $value
+}
+
 oo::define clop::Opt method to_string {} {
+    set validate [expr {$Validate eq {} ? "" : " \[has validator\]"}]
     if {[my is_subcommand]} {
         set short [expr {$ShortName ne "" ? "$ShortName " : ""}]
         set long [expr {$LongName ne "" ? "$LongName " : ""}]
@@ -95,7 +108,8 @@ oo::define clop::Opt method to_string {} {
         set long [expr {$LongName ne "" ? "--$LongName " : ""}]
         return "clop::Opt ${short}${long}kind=$Kind defvalue=$DefValue\
                 value=«$Value» get=«[my get]» help=«$Help»\
-                repeatable=$Repeatable hidden=$Hidden argname=$ArgName"
+                repeatable=$Repeatable hidden=$Hidden\
+                argname=$ArgName$validate"
     }
 }
 
@@ -221,10 +235,11 @@ oo::define clop::Parser method to_string {} {
 }
 
 oo::define clop::Parser method new_opt {{shortname ""} {longname ""} \
-        {defvalue ""} {help ""} {repeatable 0} {argname ""}} {
+        {defvalue ""} {help ""} {repeatable 0} {argname ""} \
+        {validate {}}} {
     if {$shortname eq "" && $longname eq ""} { error "unnamed option" }
     lappend Opts [clop::Opt new $shortname $longname N $defvalue $help \
-            $repeatable 0 $argname]
+            $repeatable 0 $argname $validate]
 }
 
 oo::define clop::Parser method new_hidden {{shortname ""} \
@@ -617,7 +632,8 @@ oo::define clop::Parser method parse argv {
             dict lappend pairs % $arg
         }
     }
-    my UseDefaultsForOptionsNotGiven pairs
+    set opt_for_name [my UseDefaultsForOptionsNotGiven pairs]
+    my ValidateOptions $opt_for_name $pairs
     my CheckPositionalCount [llength [dict get $pairs %]]
     return $pairs
 }
@@ -764,16 +780,34 @@ oo::define clop::Parser method MaybeOptionForName name {
 
 oo::define clop::Parser method UseDefaultsForOptionsNotGiven pairs {
     upvar $pairs pairs_
+    set opt_for_name [dict create]
     foreach opt $Opts {
         if {[$opt kind] ni {h H V}} {
+            set name ""
             if {[set longname [$opt longname]] ne ""} {
+                dict set opt_for_name $longname $opt
                 if {![dict exists $pairs_ $longname]} {
-                    dict set pairs_ $longname [$opt get]
+                    set name $longname
                 }
-            } elseif {[set shortname [$opt shortname]] ne ""} {
-                if {![dict exists $pairs_ $shortname]} {
-                    dict set pairs_ $shortname [$opt get]
+            } elseif {$name eq ""} {
+                if {[set shortname [$opt shortname]] ne ""} {
+                    dict set opt_for_name $shortname $opt
+                    if {![dict exists $pairs_ $shortname]} {
+                        set name $shortname
+                    }
                 }
+            }
+            if {$name ne ""} { dict set pairs_ $name [$opt get] }
+        }
+    }
+    return $opt_for_name
+}
+
+oo::define clop::Parser method ValidateOptions {opt_for_name pairs} {
+    dict for {name value} $pairs {
+        if {[set opt [dict getdef $opt_for_name $name {}]] ne {}} {
+            if {[set msg [$opt validate $value]] ne ""} {
+                clop::on_error $msg ;# no return
             }
         }
     }

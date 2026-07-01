@@ -8,7 +8,7 @@ if {![catch {file readlink [info script]} name]} {
 }
 tcl::tm::path add $APPPATH
 
-package require clop 2
+package require clop 3
 
 proc main {} {
     set parser [clop::Parser new comparepdf.tcl 1.0.0 2 \
@@ -23,19 +23,31 @@ proc main {} {
     $parser new_bool s show "Show report in default PDF viewer (only if\
         report is a .pdf) \[default: %mdon’t show%!\]."
     $parser new_opt T margin-top 0 "Set the top margin above which text\
-        is ignored \[default %D; %c0-144%!\]." 0 MARGIN
+        is ignored \[default %D; %c0-144%!\]." 0 MARGIN \
+        [lambda margin { if {$margin < 0 || $margin > 144} { \
+            return "top margin $margin is out of range"} }]
     $parser new_opt B margin-bottom 0 "Set the bottom margin below which\
-        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN
+        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN \
+        [lambda margin { if {$margin < 0 || $margin > 144} { \
+            return "bottom margin $margin is out of range" } }]
     $parser new_opt L margin-left 0 "Set the left margin left of which\
-        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN
+        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN \
+        [lambda margin { if {$margin < 0 || $margin > 144} { \
+            return "left margin $margin is out of range" } }]
     $parser new_opt R margin-right 0 "Set the right margin right of which\
-        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN
+        text is ignored \[default %D; %c0-144%!\]." 0 MARGIN \
+        [lambda margin { if {$margin < 0 || $margin > 144} { \
+            return "right margin $margin is out of range" } }]
     $parser new_opt "" pdftotext "" "Set the pdftotext executable’s path\
         \[default %msystem version%!\]." 0 EXE
     $parser new_opt "" algorithm fast "Set the algorithm \[default %D;\
-        valid: %cfast normal special%!\]."
+        valid: %cfast normal special%!\]." 0 ALGORITHM \
+        [lambda algorithm { if {$algorithm ni {fast normal special}} { \
+            return "unrecognized algorithm $algorithm" } }]
     $parser new_opt "" line-tolerance 10 "Set line-tolerance \[default\
-        %D; %c2-22%!\]." 0 POINTS
+        %D; %c2-22%!\]." 0 POINTS \
+        [lambda points { if {$points < 2 || $points > 22} { \
+            return "line-tolerance $points is out of range" } }]
     $parser new_bool "" ignore-hyphens "Treat every hyphen as a space;\
         \[default %mrecognize hyphens%!\]."
     $parser new_bool "" distinct-hyphens "Distinguish different types of\

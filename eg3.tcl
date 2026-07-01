@@ -8,7 +8,7 @@ if {![catch {file readlink [info script]} name]} {
 }
 tcl::tm::path add $APPPATH
 
-package require clop 2
+package require clop 3
 
 proc main {} {
     lassign [get_opts] subcmd opts

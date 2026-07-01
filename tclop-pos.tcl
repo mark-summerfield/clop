@@ -8,7 +8,7 @@ if {![catch {file readlink [info script]} name]} {
 }
 tcl::tm::path add $APPPATH
 
-package require clop 2
+package require clop 3
 package require lambda 1
 
 set ::clop::OnExit [lambda {{code 0}} { puts "—————— exit $code ——————" }]
