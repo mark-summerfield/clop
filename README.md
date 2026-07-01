@@ -143,12 +143,12 @@ Add a new option; the first four arguments are required. Repeatable defaults
 to `0` (no repeats allowed) and `argname` to `""` so the argument’s name is
 the same as the `longname` (if nonempty) otherwise the `shortname`.
 
-For normal options (i.e., excluding Boolean, debug, help, hidden,
-subcommand, and version options), a `validate` function may be given. This
-function is called with a single argument (the given value) and must return
-either `""` if the argument is invalid, or a nonempty error message
-otherwise. If the function returns an error message `clop::on_error` is
-called with the message and exits with return value `2`. See ``eg1.tcl``’s
+For normal options (i.e., excluding Boolean, debug, help, subcommand, and
+version options), a `validate` function may be given. This function is
+called with a single argument (the given value) and must return either `""`
+if the argument is invalid, or a nonempty error message otherwise. If the
+function returns an error message `clop::on_error` is called with the
+message and exits with return value `2`. See ``eg1.tcl``’s
 `make_color_validator` for an example of how to create a validator to use
 with multiple options.
 
@@ -157,11 +157,12 @@ with multiple options.
 Add a new (hidden) debug option; both arguments are optional and default to
 `D` (for `-D`) and `debug` (for `--debug`).
 
-#### `$parser new_hidden shortname longname defvalue help repeatable argname`
+#### `$parser new_hidden shortname longname defvalue help repeatable argname validate`
 
 Add a new hidden option; the first four arguments are required. Repeatable
 defaults to `0` (no repeats allowed) and `argname` to `""` so the argument’s
 name is the same as the `longname` (if nonempty) otherwise the `shortname`.
+(See `new_opt` for notes on the `validate` argument.)
 
 #### `$parser new_subcommand shortname longname subparser help`
 

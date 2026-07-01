@@ -243,10 +243,11 @@ oo::define clop::Parser method new_opt {{shortname ""} {longname ""} \
 }
 
 oo::define clop::Parser method new_hidden {{shortname ""} \
-        {longname ""} {defvalue ""} {help ""} {repeatable 0} {argname ""}} {
+        {longname ""} {defvalue ""} {help ""} {repeatable 0} {argname ""} \
+        {validate {}}} {
     if {$shortname eq "" && $longname eq ""} { error "unnamed option" }
     lappend Opts [clop::Opt new $shortname $longname N $defvalue $help \
-            $repeatable 1 $argname]
+            $repeatable 1 $argname $validate]
 }
 
 oo::define clop::Parser method new_number {{shortname ""} {longname ""} \
