@@ -9,7 +9,7 @@ nagelfar.sh \
     | grep -v Found.constant.*which.is.also.a.variable
 du -sh .git
 ls -sh .*.str
-clc -s -l tcl
+clc -s -l tcl -e eg*tcl tclop*tcl
 
 TOTAL=0
 OK=0
