@@ -23,8 +23,11 @@ e.g, `1-255` if at least one is required or `0-255` if all are optional.
 The module can also handle subcommands, each of which may have its own
 command line options.
 
-The clop module does not provide any typing or validation beyond matching
-option names and for Boolean or value-accepting.
+The clop module validates option names, Boolean values, whether an option
+accepts a value, and the minimum and maximum positionals. It is also
+possible to provide validator functions for non-Boolean value accepting
+options, e.g., numbers with a minimum and maximum (see `new_number`), or a
+choice of valid values (see `new_choice`).
 
 Pre- and post- help text, and option and positional help text, all support
 the following escapes:
@@ -115,20 +118,44 @@ Add a new help option; all arguments are optional and default to `h` (for
 Add a new version option; all arguments are optional and default to `v` (for
 `-v`), `version` (for `--version`), and `Show version and quit.`
 
-#### `$parser new_debug shortname longname`
-
-Add a new (hidden) debug option; both arguments are optional and default to
-`D` (for `-D`) and `debug` (for `--debug`).
-
 #### `$parser new_bool shortname longname help`
 
 Add a new Boolean option; all arguments are required.
 
-#### `$parser new_opt shortname longname defvalue help repeatable argname`
+#### `$parser new_number shortname longname defvalue help repeatable argname minimum maximum`
+
+Add a new number option; the first four arguments are required. Repeatable
+defaults to `0` (no repeats allowed) and `argname` to `""` so the argument’s
+name is the same as the `longname` (if nonempty) otherwise the `shortname`.
+The default minimum is 0 and maximum 100, so usually these will need to be
+specified.
+
+#### `$parser new_choice shortname longname defvalue help repeatable argname choices`
+
+Add a new choice option; the first four arguments are required. Repeatable
+defaults to `0` (no repeats allowed) and `argname` to `""` so the argument’s
+name is the same as the `longname` (if nonempty) otherwise the `shortname`.
+A list of valid choices must be given.
+
+#### `$parser new_opt shortname longname defvalue help repeatable argname validate`
 
 Add a new option; the first four arguments are required. Repeatable defaults
 to `0` (no repeats allowed) and `argname` to `""` so the argument’s name is
 the same as the `longname` (if nonempty) otherwise the `shortname`.
+
+For normal options (i.e., excluding Boolean, debug, help, hidden,
+subcommand, and version options), a `validate` function may be given. This
+function is called with a single argument (the given value) and must return
+either `""` if the argument is invalid, or a nonempty error message
+otherwise. If the function returns an error message `clop::on_error` is
+called with the message and exits with return value `2`. See ``eg1.tcl``’s
+`make_color_validator` for an example of how to create a validator to use
+with multiple options.
+
+#### `$parser new_debug shortname longname`
+
+Add a new (hidden) debug option; both arguments are optional and default to
+`D` (for `-D`) and `debug` (for `--debug`).
 
 #### `$parser new_hidden shortname longname defvalue help repeatable argname`
 
@@ -157,6 +184,22 @@ name), and with a default value if not set during parsing. The returned
 empty) list of positional arguments, and `*` whose value is the name of the
 subcommand that was used (or `""` if no subcommand was used). 
 
+### Helpers
+
+####  `clop::make_number_validator name minimum maximum`
+
+This creates a function suitable to pass to `new_opt` as a `validate`
+function. Normally it is easier to use `new_number` and simply pass a
+minimum and maximum value. (Internally, `new_number` calls
+`clop::make_number_validator`.)
+
+####  `clop::make_choice_validator name choices`
+
+This creates a function suitable to pass to `new_opt` as a `validate`
+function. Normally it is easier to use `new_choice` and simply pass a list
+of valid choices. (Internally, `new_choice` calls
+`clop::make_choice_validator`.)
+
 ### Error Handling
 
 Although the parser and its methods do some basic validation and error
@@ -175,7 +218,8 @@ Prints the given message prefixed with “`warning: `” in red on the console.
 #### `clop::on_error msg ecode`
 
 Prints the given message prefixed with “`error: `” in red on the console and
-then exits with error code `1` or with `ecode` if given.
+then exits with error code `2` or with `ecode` if given. (When called
+internally an exit code of `1` is used, except for validators.)
 
 ## Examples
 
@@ -293,7 +337,7 @@ The `eg3.tcl` example is similar.
 
 Tcl/Tk >= 9.0.2; Tcllib >= 2.0.
 
-All the code is in the module file `clop-2.tm`.
+All the code is in the module file `clop-3.tm`.
 
 ## License
 

@@ -49,4 +49,6 @@ OPTIONS:
   -h or --help                    Show this help and quit.
 
 The unit used throughout is the point (1/72"). For colors use HTML-style
-hex numbers.
+hex numbers. (For colors either specify with = e.g.,
+--insert-color=#00FFFF, or use quotes, e.g., --insert-color '#00FFFF',
+since the # can confuse some shells.)

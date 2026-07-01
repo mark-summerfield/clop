@@ -249,6 +249,26 @@ oo::define clop::Parser method new_hidden {{shortname ""} \
             $repeatable 1 $argname]
 }
 
+oo::define clop::Parser method new_number {{shortname ""} {longname ""} \
+        {defvalue 0} {help ""} {repeatable 0} {argname ""} \
+        {minimum 0} {maximum 100}} {
+    if {$shortname eq "" && $longname eq ""} { error "unnamed option" }
+    set name [expr {$longname ne "" ? $longname : $shortname}]
+    lappend Opts [clop::Opt new $shortname $longname N $defvalue $help \
+            $repeatable 0 $argname \
+            [clop::make_number_validator $name $minimum $maximum]]
+}
+
+oo::define clop::Parser method new_choice {{shortname ""} {longname ""} \
+        {defvalue 0} {help ""} {repeatable 0} {argname ""} \
+        {choices {}}} {
+    if {$shortname eq "" && $longname eq ""} { error "unnamed option" }
+    set name [expr {$longname ne "" ? $longname : $shortname}]
+    lappend Opts [clop::Opt new $shortname $longname N $defvalue $help \
+            $repeatable 0 $argname \
+            [clop::make_choice_validator $name $choices]]
+}
+
 oo::define clop::Parser method new_bool {{shortname ""} {longname ""} \
         {help ""}} {
     if {$shortname eq "" && $longname eq ""} { error "unnamed bool option" }
@@ -656,11 +676,11 @@ oo::define clop::Parser method ParseSubcommand argv {
                         return $pairs
                     } else {
                         clop::on_error \
-                            "missing subparser for subcommand “$name”"
+                            "missing subparser for subcommand “$name”" 1
                     }
                 }
             }
-            clop::on_error "unrecognized subcommand “$subcmd”"
+            clop::on_error "unrecognized subcommand “$subcmd”" 1
         }
     }
 }
@@ -727,10 +747,10 @@ oo::define clop::Parser method ReadLongOption {pairs arg argv i} {
                     dict set pairs_ $arg $value
                 }
             } else {
-                clop::on_error "unrecognized long option name '$arg'"
+                clop::on_error "unrecognized long option name '$arg'" 1
             }
         } else {
-            clop::on_error "unrecognized long option name '$arg'"
+            clop::on_error "unrecognized long option name '$arg'" 1
         }
     }
     return $i
@@ -762,7 +782,7 @@ oo::define clop::Parser method ReadGroupedShortOptions {pairs arg argv i} {
                 break
             }
         } else {
-            clop::on_error "unrecognized short option name '$a'"
+            clop::on_error "unrecognized short option name '$a'" 1
         }
     }
     return $i
@@ -855,10 +875,10 @@ oo::define clop::Parser method CheckNamesAreUnique {} {
 oo::define clop::Parser method CheckPositionalCount pos_count {
     if {$pos_count < $MinPos} {
         clop::on_error "too few positional arguments; expected $MinPos,\
-            got $pos_count"
+            got $pos_count" 1
     } elseif {$MaxPos != 255 && $pos_count > $MaxPos} {
         clop::on_error "too many positional arguments; expected $MaxPos,\
-            got $pos_count"
+            got $pos_count" 1
     }
 }
 
@@ -924,9 +944,30 @@ proc clop::on_warn msg {
     puts "${::clop::RED}warning: ${msg}$::clop::RESET"
 }
 
-proc clop::on_error {msg {ecode 1}} {
+proc clop::on_error {msg {ecode 2}} {
     puts "${::clop::RED}error: ${msg}$::clop::RESET"
     {*}$::clop::OnExit $ecode
+}
+
+proc clop::make_number_validator {name minimum maximum} {
+    lambda {name minimum maximum value} {
+        if {![string is double $value]} {
+            return "expected a number for $name; got $value."
+        }
+        if {$value < $minimum || $value > $maximum} {
+            return "expected a number \[$minimum,$maximum\] for $name;\
+                got $value."
+        }
+    } $name $minimum $maximum
+}
+
+proc clop::make_choice_validator {name choices} {
+    lambda {name choices value} {
+        if {$value ni $choices} {
+            return "expected $name to be one of: [join $choices];\
+                got $value."
+        }
+    } $name $choices
 }
 
 proc clop::term_width {{defwidth 72}} {
