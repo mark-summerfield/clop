@@ -90,6 +90,12 @@ subcommand’s name and the parser should be the main parser (created with
 
 ### Configure a Parser or Subparser
 
+#### `$parser set_poshelp_wrap bool`
+
+By default posthelp is wrapped just like prehelp. However by calling this
+method with `1` this can be turned off and posthelp will be rendered with
+spaces and newlines preserved.
+
 #### `$parser set_positional_names positional_name1 positional_name_n`
 
 Replace the positional argument names `FILE` (for the first positional) and
