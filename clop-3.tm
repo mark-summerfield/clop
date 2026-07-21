@@ -10,6 +10,7 @@ namespace eval clop {
     if {[dict exists [chan configure stdout] -mode]} { ;# tty
         const BOLD "\x1B\[1m"
         const ITALIC "\x1B\[3m"
+        const UNDERLINE "\x1B\[4m"
         const RED "\x1B\[31m"
         const GREEN "\x1B\[32m"
         const BLUE "\x1B\[34m"
@@ -20,6 +21,7 @@ namespace eval clop {
     } else {
         const BOLD ""
         const ITALIC ""
+        const UNDERLINE ""
         const RED ""
         const GREEN ""
         const BLUE ""
@@ -118,6 +120,7 @@ oo::class create clop::Parser {
     variable AppVersion
     variable PreHelp
     variable PostHelp
+    variable PostHelpWrap
     variable PositionalName1
     variable PositionalNameN
     variable PositionalHelp
@@ -150,6 +153,7 @@ oo::define clop::Parser constructor {appname appversion \
     set PositionalLine ""
     set PreHelp $prehelp
     set PostHelp $posthelp
+    set PostHelpWrap 1
     set PositionalHelp $positional_help
     set Opts [list]
 }
@@ -193,6 +197,11 @@ oo::define clop::Parser method set_prehelp help { set PreHelp $help }
 
 oo::define clop::Parser method posthelp {} { return $PostHelp }
 oo::define clop::Parser method set_posthelp help { set PostHelp $help }
+
+oo::define clop::Parser method posthelp_wrap {} { return $PostHelpWrap }
+oo::define clop::Parser method set_posthelp_wrap wrap {
+    set PostHelpWrap $wrap
+}
 
 oo::define clop::Parser method positional_help {} { return $PositionalHelp }
 oo::define clop::Parser method set_positional_help help {
@@ -346,8 +355,10 @@ oo::define clop::Parser method on_help {{full 0}} {
     }
     my ShowOptions $WIDTH $IWIDTH
     if {$PostHelp ne "" && $SubparserName eq ""} {
-        puts \n[clop::Unescape [textutil::adjust::adjust $PostHelp \
-                -strictlength 1 -length $WIDTH]]
+        set posthelp [expr {$PostHelpWrap \
+            ? [textutil::adjust::adjust $PostHelp -strictlength 1 -length \
+                $WIDTH] : $PostHelp}]
+        puts \n[clop::Unescape $posthelp]
     }
     {*}$::clop::OnExit
 }
@@ -686,24 +697,24 @@ oo::define clop::Parser method ParseSubcommand argv {
     }
 }
 
-oo::define clop::Parser method ReadOption {pairs arg argv i} {
-    upvar $pairs pairs_
+oo::define clop::Parser method ReadOption {pairs_ arg argv i} {
+    upvar $pairs_ pairs
     set arg [string range $arg 1 end]
     set argv [lrange $argv $i+1 end]
     if {[dict exists $ShortNames $arg]} { ;# -x or -y Val
-        set i [my ReadShortOption pairs_ $arg $argv $i]
+        set i [my ReadShortOption pairs $arg $argv $i]
     } else {
         if {[string match -* $arg]} { ;# --bool or --long Val or --long=Val
-            set i [my ReadLongOption pairs_ $arg $argv $i]
+            set i [my ReadLongOption pairs $arg $argv $i]
         } else { ;# -vwx or -y=Val or -vwxyVal or -vwxy=Val
-            set i [my ReadGroupedShortOptions pairs_ $arg $argv $i]
+            set i [my ReadGroupedShortOptions pairs $arg $argv $i]
         }
     }
     return $i
 }
 
-oo::define clop::Parser method ReadShortOption {pairs arg argv i} {
-    upvar $pairs pairs_
+oo::define clop::Parser method ReadShortOption {pairs_ arg argv i} {
+    upvar $pairs_ pairs
     set opt [my MaybeOptionForName $arg] ;# may not return
     if {[set longname [$opt longname]] ne ""} { set arg $longname }
     if {[$opt kind] in {B D}} {
@@ -713,15 +724,15 @@ oo::define clop::Parser method ReadShortOption {pairs arg argv i} {
         incr i
     }
     if {[$opt repeatable]} {
-        dict lappend pairs_ $arg $value
+        dict lappend pairs $arg $value
     } else {
-        dict set pairs_ $arg $value
+        dict set pairs $arg $value
     }
     return $i
 }
 
-oo::define clop::Parser method ReadLongOption {pairs arg argv i} {
-    upvar $pairs pairs_
+oo::define clop::Parser method ReadLongOption {pairs_ arg argv i} {
+    upvar $pairs_ pairs
     set arg [string range $arg 1 end]
     if {[dict exists $LongNames $arg]} { ;# --bool or --long Val
         set opt [my MaybeOptionForName $arg] ;# may not return
@@ -732,9 +743,9 @@ oo::define clop::Parser method ReadLongOption {pairs arg argv i} {
             incr i
         }
         if {[$opt repeatable]} {
-            dict lappend pairs_ $arg $value
+            dict lappend pairs $arg $value
         } else {
-            dict set pairs_ $arg $value
+            dict set pairs $arg $value
         }
     } else { ;# --long=Val
         if {[set j [string first = $arg]] > -1} {
@@ -743,9 +754,9 @@ oo::define clop::Parser method ReadLongOption {pairs arg argv i} {
             if {[dict exists $LongNames $arg]} {
                 set opt [my MaybeOptionForName $arg] ;# may not return
                 if {[$opt repeatable]} {
-                    dict lappend pairs_ $arg $value
+                    dict lappend pairs $arg $value
                 } else {
-                    dict set pairs_ $arg $value
+                    dict set pairs $arg $value
                 }
             } else {
                 clop::on_error "unrecognized long option name '$arg'" 1
@@ -757,8 +768,8 @@ oo::define clop::Parser method ReadLongOption {pairs arg argv i} {
     return $i
 }
 
-oo::define clop::Parser method ReadGroupedShortOptions {pairs arg argv i} {
-    upvar $pairs pairs_
+oo::define clop::Parser method ReadGroupedShortOptions {pairs_ arg argv i} {
+    upvar $pairs_ pairs
     for {set j 0} {$j < [string length $arg]} {incr j} {
         set a [string index $arg $j]
         if {[dict exists $ShortNames $a]} {
@@ -766,9 +777,9 @@ oo::define clop::Parser method ReadGroupedShortOptions {pairs arg argv i} {
             if {[set longname [$opt longname]] ne ""} { set a $longname }
             if {[$opt kind] in {B D}} {
                 if {[$opt repeatable]} {
-                    dict lappend pairs_ $a 1
+                    dict lappend pairs $a 1
                 } else {
-                    dict set pairs_ $a 1
+                    dict set pairs $a 1
                 }
             } else {
                 if {[set value [string range $arg $j+1 end]] eq ""} {
@@ -776,9 +787,9 @@ oo::define clop::Parser method ReadGroupedShortOptions {pairs arg argv i} {
                     incr i
                 }
                 if {[$opt repeatable]} {
-                    dict lappend pairs_ $a $value
+                    dict lappend pairs $a $value
                 } else {
-                    dict set pairs_ $a $value
+                    dict set pairs $a $value
                 }
                 break
             }
@@ -799,26 +810,26 @@ oo::define clop::Parser method MaybeOptionForName name {
     }
 }
 
-oo::define clop::Parser method UseDefaultsForOptionsNotGiven pairs {
-    upvar $pairs pairs_
+oo::define clop::Parser method UseDefaultsForOptionsNotGiven pairs_ {
+    upvar $pairs_ pairs
     set opt_for_name [dict create]
     foreach opt $Opts {
         if {[$opt kind] ni {h H V}} {
             set name ""
             if {[set longname [$opt longname]] ne ""} {
                 dict set opt_for_name $longname $opt
-                if {![dict exists $pairs_ $longname]} {
+                if {![dict exists $pairs $longname]} {
                     set name $longname
                 }
             } elseif {$name eq ""} {
                 if {[set shortname [$opt shortname]] ne ""} {
                     dict set opt_for_name $shortname $opt
-                    if {![dict exists $pairs_ $shortname]} {
+                    if {![dict exists $pairs $shortname]} {
                         set name $shortname
                     }
                 }
             }
-            if {$name ne ""} { dict set pairs_ $name [$opt get] }
+            if {$name ne ""} { dict set pairs $name [$opt get] }
         }
     }
     return $opt_for_name
@@ -898,12 +909,14 @@ proc clop::dump {opts {print 1}} {
     }
     set positionals [dict get $opts %]
     if {[llength $positionals]} {
-        set i [llength $out]
+        set sep ""
+        lappend line " %: \["
         foreach value $positionals {
-            lappend out «$value»
+            lappend line $sep«$value»
+            set sep " "
         }
-        ledit out $i $i " %: \[[lindex $out $i]"
-        ledit out end end «$value»\]
+        lappend line "\]"
+        lappend out [join $line ""]
     } else {
         lappend out " %: \[\]"
     }
