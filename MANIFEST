@@ -1,3 +1,13 @@
+# TODO add parser method: set_configured_values <dict>
+# in the UseDefaultsForOptionsNotGiven change this:
+#   if {$name ne ""} { dict set pairs $name [$opt get] }
+# -to-
+#   if {$name ne ""} {
+#	dict set pairs $name [$ConfiguredValues getdef $name [$opt get]]
+#   }
+# Then update README.md; then update altkey so that altkey.cfg does _no_
+# override the command line because it is read _before_ parsing.
+
 clop-3.tm
 
 tclop.tcl
