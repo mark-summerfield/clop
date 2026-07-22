@@ -90,12 +90,6 @@ subcommand’s name and the parser should be the main parser (created with
 
 ### Configure a Parser or Subparser
 
-#### `$parser set_poshelp_wrap bool`
-
-By default posthelp is wrapped just like prehelp. However by calling this
-method with `1` this can be turned off and posthelp will be rendered with
-spaces and newlines preserved.
-
 #### `$parser set_positional_names positional_name1 positional_name_n`
 
 Replace the positional argument names `FILE` (for the first positional) and
@@ -111,6 +105,29 @@ arguments can be represented by setting the line to output.
 
 For example, the `str` tool’s `diff` subcommand uses the positional line:  
 `"%b<@GID1>%! %I%g\[@GID2\]%! %b<FILE>%!"`
+
+#### `$parser set_poshelp_wrap bool`
+
+By default posthelp is wrapped just like prehelp. However by calling this
+method with `1` this can be turned off and posthelp will be rendered with
+spaces and newlines preserved.
+
+#### `$parser set_configured_values dict`
+
+At the end of the parse, any option that has _not_ been specified on the
+command line, is added to the `dict` to be returned, with its value set to
+the option’s default. This ensures that the returned `dict` has _every_
+option with _some_ value.
+
+It is possible to override option defaults by, say, using a configuration
+file. In these cases, a “configured values” `dict`, whose keys must be
+option names (longnames for options that have them, shortnames otherwise),
+and whose values should be those read from the configuration file, may be
+passed to this method. Then, at the end of the parse, any option that has
+_not_ been specified on the command line, is added to the `dict` to be
+returned with its value set to the corresponding value in the configured
+values `dict` if the option’s name is present; otherwise with the option’s
+default.
 
 ### Add Options to a Parser or Subparser
 
@@ -231,9 +248,11 @@ internally an exit code of `1` is used, except for validators.)
 ## Examples
 
 See `eg[12].tcl` for basic examples of use, and `eg3.tcl` for an example
-that shows how to handle subcommands. The following examples have been
-redirected to files so color has been removed and they are wrapped at 72
-columns rather than the terminal width.
+that shows how to handle subcommands. See
+[altkey](https://github.com/mark-summerfield/altkey) for an example that
+uses configured values. The following examples have been redirected to files
+so color has been removed and they are wrapped at 72 columns rather than the
+terminal width.
 
 ### Example: `efind.tcl -h` _or_ `efind.tcl --help`
 
