@@ -5,7 +5,40 @@ The clop module supports command line option parsing.
 The module is developed and tested on Linux and should work on any
 non-proprietary Unix.
 
-### Overview
+## Example
+
+```
+set parser [clop::Parser new efind 1.0.0 1-255 \
+    "Searches for files that match %bWHAT%!." "" \
+    "%bWHAT%! is what to search for; %g%IDIR1 DIR2%! … are the\
+    folders to search \[default %B.%!\]."]
+$parser set_positional_names WHAT DIR
+$parser new_debug
+$parser new_bool c casesensitive "Respect case \[default %mignore case%!\]."
+$parser new_opt x exclude "" "Exclude the given file/folder; %Ithis\
+    option may be repeated%!." 1 EXCL
+$parser new_bool v verbose "Show progress \[default %mdon’t showprogress%!\]."
+$parser new_version V
+$parser new_help
+if {![llength $::argv]} { $parser on_help }
+set opts [$parser parse $::argv]
+```
+
+This example accepts command line options `-D` or `--debug`, `-c` or
+`--casesensitive`, `-x` or `--exclude` (with repetitions allowed), `-v` or
+`--verbose`, `-V` (normally `-v` but we overrode to avoid conflict with
+verbose) or `--version` , and `-h` or `--help`. It requires at least one
+positional argument (what to search for), and accepts any number of
+following arguments (folders to search).
+
+The `opts` `dict` that is returned by the `parse` call will have every
+option (`debug`, `casesensitive`, etc.) with its key being its long name (or
+short name if no long name is given) and with its given or default value.
+The positional arguments are included under the key `%` with a value being a
+list. If subcommands are used (see a later example), the given subcommand is
+included under the key `*`.
+
+## Overview
 
 The clop module can handle short and long Boolean options, e.g., `-a` and
 `--best`, and short and long value-accepting options, e.g., `-m72`, `-m=72`,
