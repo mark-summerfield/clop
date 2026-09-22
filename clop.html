@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Line Option Parser (clop)</title>
+</head>
+<body>
+
+<h1>Command Line Option Parser (clop)</h1>
+
+<p> 
+The clop module supports command line option parsing.
+</p>
+
+<p>
+The module is developed and tested on Linux and should work on any
+non-proprietary Unix.
+</p>
+
+<p>
+Below is a basic example of usage. This is followed by an <a
+href="#overview">Overview</a> and then the <a href="#api">API</a>. At
+the end are some further <a href="#egs">Examples</a>.
+</p>
+
+<b>Example</b>
+
+<pre><code>
+set parser [clop::Parser new efind 1.0.0 1-255 \
+    "Searches for files that match %bWHAT%!." "" \
+    "%bWHAT%! is what to search for; %g%IDIR1 DIR2%! … are the\
+    folders to search \[default %B.%!\]."]
+$parser set_positional_names WHAT DIR
+$parser new_debug
+$parser new_bool c casesensitive "Respect case \[default %mignore case%!\]."
+$parser new_opt x exclude "" "Exclude the given file/folder; %Ithis\
+    option may be repeated%!." 1 EXCL
+$parser new_bool v verbose "Show progress \[default %mdon’t showprogress%!\]."
+$parser new_version V
+$parser new_help
+if {![llength $::argv]} { $parser on_help }
+set opts [$parser parse $::argv]
+</code></pre>
+
+<p>
+This example accepts command line options <code>-D</code> or
+<code>--debug</code>, <code>-c</code> or <code>--casesensitive</code>,
+<code>-x</code> or <code>--exclude</code> (with repetitions allowed),
+<code>-v</code> or <code>--verbose</code>, <code>-V</code> (normally
+<code>-v</code> but we overrode to avoid conflict with verbose) or
+<code>--version</code> , and <code>-h</code> or <code>--help</code>. It
+requires at least one positional argument (what to search for), and
+accepts any number of following arguments (folders to search).
+</p>
+
+<p>
+The <code>opts</code> <code>dict</code> that is returned by the
+<code>parse</code> call will have every option (<code>debug</code>,
+<code>casesensitive</code>, etc.) with its key being its long name (or
+short name if no long name is given) and with its given or default
+value. The positional arguments are included under the key
+<code>%</code> with a value being a list. If subcommands are used (see a
+later example), the given subcommand is included under the key
+<code>*</code>.
+</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>
+The clop module can handle short and long Boolean options, e.g.,
+<code>-a</code> and <code>--best</code>, and short and long
+value-accepting options, e.g., <code>-m72</code>, <code>-m=72</code>,
+<code>-m 72</code>, <code>--margin=72</code>, <code>--margin 72</code>.
+</p>
+
+<p>
+It can also handle bundled short Boolean options with the last option
+either a Boolean or value-accepting, e.g., <code>-adg</code>,
+<code>-adgm72, </code>-adgm=72, <code>-adgm 72</code>.
+</p>
+
+<p>
+Using <code>--</code> separates options from positionals (but isn’t
+normally needed).
+</p>
+
+<p>
+The positional count is specified as an exact count (which may be
+<code>0</code>), or a range of counts, e.g., <code>1-3</code>. For
+“unlimited”, use an upper bound of <code>255</code>, e.g,
+<code>1-255</code> if at least one is required or <code>0-255</code> if
+all are optional.
+</p>
+
+<p>
+The module can also handle subcommands, each of which may have its own
+command line options.
+</p>
+
+<p>
+The clop module validates option names, Boolean values, whether an
+option accepts a value, and the minimum and maximum positionals. It is
+also possible to provide validator functions for non-Boolean value
+accepting options, e.g., numbers with a minimum and maximum (see
+<code>new_number</code>), or a choice of valid values (see
+<code>new_choice</code>).
+</p>
+
+<p>
+Pre- and post- help text, and option and positional help text, all support
+the following escapes:
+</p>
+
+<ul>
+<li><code>%B</code> bold on</li>
+<li><code>%I</code> italic on</li>
+<li><code>%r</code> red on (used by on\_warn and on\_error)</li>
+<li><code>%g</code> green on (used to signify optional)</li>
+<li><code>%b</code> blue on (used to signify required)</li>
+<li><code>%c</code> cyan on (recommended for showing acceptable values)</li>
+<li><code>%m</code> magenta on (used for default values)</li>
+<li><code>%y</code> yellow on</li>
+<li><code>%!</code> everything off</li>
+<li><code>%%</code> literal <code>%</code></li>
+</ul>
+
+<p>
+In addition, option help texts also support:
+</p>
+
+<ul>
+<li><code>%D</code> the option’s default value</li>
+</ul>
+
+<p>
+Options that take a value use their longname (or shortname if no longname is
+specified) as their argument name; this can be overridden by passing an
+<code>argname</code>.
+</p>
+
+<p>
+If at least one positional argument is required and you want help to be
+shown if no positionals are present, put this line immediately before the
+call to <code>parse</code>, e.g.,:
+</p>
+
+<pre><code>
+if {!$::argc} { $parser on_help }
+set opts [$parser parse $::argv]
+</code></pre>
+
+<p>
+For multi-valued options, either set <code>repeatable</code> to
+<code>1</code> (true) so the user can repeat the option (recommended),
+or designate a separator (e.g., <code>:</code>) and pass multiple values
+as a single string using the separator.
+</p>
+
+<p>
+The parser returns a <code>dict</code> mapping option names (as keys) to
+their values. Every option is returned with its long name as key (or
+short name for options that don’t have a long name), and with a default
+value if not set during parsing. The returned <code>dict</code> always
+contains two special keys, <code>%</code> whose value is a (possibly
+empty) list of positional arguments, and <code>*</code> whose value is
+the name of the subcommand that was used (or <code>""</code> if no
+subcommand was used). 
+</p>
+
+<h2 id="api">API</h2>
+
+<h3>Create a Parser</h3>
+
+<h4 id="new"><code>clop::Parser new <i>appname appversion positional_count
+prehelp posthelp positional_help</i></code></h4>
+
+<p>
+Create a new parser; <code><i>appname</i></code> and
+<code><i>appversion</i></code> are required.
+</p>
+
+<h3>Create a Subcommand Parser (a Subparser)</h3>
+
+<h4 id="subparser"><code>clop::subparser <i>name parser positional_count
+shorthelp longhelp positional_help</i></code></h4>
+
+<p>
+Create a subparser; the first two arguments are required. The name is the
+subcommand’s name and the parser should be the main parser (created with
+<a href="new"><code>clop::Parser new</code></a>).
+</p>
+
+<h3>Configure a Parser or Subparser</h3>
+
+<h4><code>$parser set_positional_names <i>positional_name1
+positional_name_n</i></code></h4>
+
+<p>
+Replace the positional argument names <code>FILE</code> (for the first
+positional) and <code>FILE</code> (which becomes <code>FILE1</code>,
+<code>FILE2</code>, … <code>FILEn</code>) to alternative names.
+</p>
+
+<p>
+For example, the <code>efind.tcl</code> tool uses the names
+<code>WHAT</code> and <code>DIR</code>.
+</p>
+
+<h4><code>$parser set_positional_line <i>line</i></code></h4>
+
+<p>
+In some situations changing the positional argument names isn’t sufficient
+for customizing the positional arguments. In these cases the positional
+arguments can be represented by setting the line to output.
+</p>
+
+<p>
+For example, the <code>str</code> tool’s <code>diff</code> subcommand
+uses the positional line:<br />
+<code>"%b<@GID1>%! %I%g\[@GID2\]%! %b<FILE>%!"</code>
+</p>
+
+<h4><code>$parser set_poshelp_wrap <i>bool</i></code></h4>
+
+<p>
+By default posthelp is wrapped just like prehelp. However by calling
+this method with <code>1</code> this can be turned off and posthelp will
+be rendered with spaces and newlines preserved.
+</p>
+
+<h4><code>$parser set_configured_values <i>dict</i></code></h4>
+
+<p>
+At the end of the parse, any option that has <i>not</i> been specified
+on the command line, is added to the <code>dict</code> to be returned,
+with its value set to the option’s default. This ensures that the
+returned <code>dict</code> has <i>every</i> option with <i>some</i>
+value.
+</p>
+
+<p>
+It is possible to override option defaults by, say, using a
+configuration file. In these cases, a “configured values”
+<code>dict</code>, whose keys must be option names (longnames for
+options that have them, shortnames otherwise), and whose values should
+be those read from the configuration file, may be passed to this method.
+Then, at the end of the parse, any option that has <i>not</i> been
+specified on the command line, is added to the <code>dict</code> to be
+returned with its value set to the corresponding value in the configured
+values <code>dict</code> if the option’s name is present; otherwise with
+the option’s default.
+</p>
+
+<h3>Add Options to a Parser or Subparser</h3>
+
+<h4><code>$parser new_help <i>shortname longname help</i></code></h3>
+
+<p>
+Add a new help option; all arguments are optional and default to
+<code>h</code> (for <code>-h</code>), <code>help</code> (for
+<code>--help</code>), and <code>Show this help and quit.</code>
+</p>
+
+<h4><code>$parser new_version <i>shortname longname help</i></code></h4>
+
+<p>
+Add a new version option; all arguments are optional and default to
+<code>v</code> (for <code>-v</code>), <code>version</code> (for
+<code>--version</code>), and <code>Show version and quit.</code>
+</p>
+
+<h4><code>$parser new_bool <i>shortname longname help</i></code></h4>
+
+<p>
+Add a new Boolean option; all arguments are required.
+</p>
+
+<h4><code>$parser new_number <i>shortname longname defvalue help
+repeatable argname minimum maximum</i></code></h4>
+
+<p>
+Add a new number option; the first four arguments are required.
+Repeatable defaults to <code>0</code> (no repeats allowed) and
+<code>argname</code> to <code>""</code> so the argument’s name is the
+same as the <code>longname</code> (if nonempty) otherwise the
+<code>shortname</code>. The default minimum is 0 and maximum 100, so
+usually these will need to be specified.
+</p>
+
+<h4><code>$parser new_choice <i>shortname longname defvalue help
+repeatable argname choices</i></code></h4>
+
+<p>
+Add a new choice option; the first four arguments are required.
+Repeatable defaults to <code>0</code> (no repeats allowed) and
+<code>argname</code> to <code>""</code> so the argument’s name is the
+same as the <code>longname</code> (if nonempty) otherwise the
+<code>shortname</code>. A list of valid choices must be given.
+</p>
+
+<h4><code>$parser new_opt <i>shortname longname defvalue help repeatable
+argname validate</i></code></h4>
+
+<p>
+Add a new option; the first four arguments are required. Repeatable
+defaults to <code>0</code> (no repeats allowed) and <code>argname</code>
+to <code>""</code> so the argument’s name is the same as the
+<code>longname</code> (if nonempty) otherwise the
+<code>shortname</code>.
+</p>
+
+<p>
+For normal options (i.e., excluding Boolean, debug, help, subcommand,
+and version options), a <code>validate</code> function may be given.
+This function is called with a single argument (the given value) and
+must return either <code>""</code> if the argument is invalid, or a
+nonempty error message otherwise. If the function returns an error
+message <code>clop::on_error</code> is called with the message and exits
+with return value <code>2</code>. See `<code>eg1.tcl</code>`’s
+<code>make_color_validator</code> for an example of how to create a
+validator to use with multiple options.
+</p>
+
+<h4><code>$parser new_debug <i>shortname longname</i></code></h4>
+
+<p>
+Add a new (hidden) debug option; both arguments are optional and default
+to <code>D</code> (for <code>-D</code>) and <code>debug</code> (for
+<code>--debug</code>).
+</p>
+
+<h4><code>$parser new_hidden <i>shortname longname defvalue help
+repeatable argname validate</i></code></h4>
+
+<p>
+Add a new hidden option; the first four arguments are required.
+Repeatable defaults to <code>0</code> (no repeats allowed) and
+<code>argname</code> to <code>""</code> so the argument’s name is the
+same as the <code>longname</code> (if nonempty) otherwise the
+<code>shortname</code>. (See <code>new_opt</code> for notes on the
+<code>validate</code> argument.)
+</p>
+
+<h4><code>$parser new_subcommand <i>shortname longname subparser
+help</i></code></h4>
+
+<p>
+Add a new subcommand; the first three arguments are required and the
+fourth is recommended. The subparser should be one created by
+<a href="subparser"><code>clop::subparser</code></a>.
+</p>
+
+<h4><code>$parser new_help_subcommand <i>shortname longname subparser
+help</i></code></h4>
+
+<p>
+Add a new help subcommand; the first three arguments are required;
+shortname is normally <code>h</code>, longname <code>help</code>, and
+the subparser should be one created by <code>clop::subparser</code>. The
+<code>help</code> argument defaults to <code>Show full help.</code>.
+</p>
+
+<h4><code>$parser parse <i>argv</i></code></h4>
+
+<p>
+Parse the given list of arguments (typically <code>$::argv</code>) and
+return a <code>dict</code> mapping option names (as keys) to their
+values. Every option is returned with its long name as key (or short
+name for options that don’t have a long name), and with a default value
+if not set during parsing. The returned <code>dict</code> always
+contains two special keys, <code>%</code> whose value is a (possibly
+empty) list of positional arguments, and <code>*</code> whose value is
+the name of the subcommand that was used (or <code>""</code> if no
+subcommand was used). 
+</p>
+
+<h3>Helpers</h3>
+
+<h4><code>clop::make_number_validator <i>name minimum
+maximum</i></code></h4>
+
+<p>
+This creates a function suitable to pass to <code>new_opt</code> as a
+<code>validate</code> function. Normally it is easier to use
+<code>new_number</code> and simply pass a minimum and maximum value.
+(Internally, <code>new_number</code> calls
+<code>clop::make_number_validator</code>.)
+</p>
+
+<h4><code>clop::make_choice_validator <i>name choices</i></code></h4>
+
+<p>
+This creates a function suitable to pass to <code>new_opt</code> as a
+<code>validate</code> function. Normally it is easier to use
+<code>new_choice</code> and simply pass a list of valid choices.
+(Internally, <code>new_choice</code> calls
+<code>clop::make_choice_validator</code>.)
+</p>
+
+<h3>Error Handling</h3>
+
+<p>
+Although the parser and its methods do some basic validation and error
+handling, for options that take a value and for positionals, they know
+nothing about any constraints that may apply. For example, an option
+might take an integer within a certain range. For this reason, after
+parsing it is common practice to validate the items in the returned
+<code>dict</code>.
+</p>
+
+<p>
+The <code>clop</code> package provides two commands that it uses for its
+own warnings and error messages that are also available to users.
+</p>
+
+<h4><code>clop::on_warn <i>msg</i></code></h4>
+
+<p>
+Prints the given message prefixed with “<code>warning: </code>” in red
+on the console.
+</p>
+
+<h4><code>clop::on_error <i>msg ecode</i></code></h4>
+
+<p>
+Prints the given message prefixed with “<code>error: </code>” in red on
+the console and then exits with error code <code>2</code> or with
+<code>ecode</code> if given. (When called internally an exit code of
+<code>1</code> is used, except for validators.)
+</p>
+
+<h2 id="egs">Examples</h2>
+
+<p>
+See <code>eg[12].tcl</code> for basic examples of use, and
+<code>eg3.tcl</code> for an example that shows how to handle
+subcommands. See <a
+href="https://github.com/mark-summerfield/altkey">altkey</a> for an
+example that uses configured values. The following examples have been
+redirected to files so color has been removed and they are wrapped at 72
+columns rather than the terminal width.
+</p>
+
+<h3>Example: <code>efind.tcl -h</code> <i>or</i> <code>efind.tcl
+--help</code></h3>
+
+<pre><code>
+usage: efind [OPTIONS] &lt;WHAT&gt; [DIR1 … [DIRn]]
+
+Searches for files that match WHAT in . or in any specified folders,
+including recursively into subfolders. WHAT is either .ext or text
+or integer, e.g., .tcl or .py; or readme. For .tcl searches
+*.{tcl,tm,tk}; for .py *.{py,pyw}; for .c *.{c,h}; for .cpp or .c++
+*.{h,hxx,hpp,h++,C,cc,cp,cxx,cpp,CPP,c++}; for integer means files
+modified since that many days ago, 0 being today, 1 yesterday, etc;
+others as is.
+
+POSITIONALS:
+  WHAT is what to search for; DIR1 DIR2 … are the folders to
+  search [default .].
+
+OPTIONS:
+  -c or --casesensitive  Respect case [default ignore case].
+  -i or --ignore         Ignore what’s listed in ~/.config/efind.lst.
+  -x or --exclude EXCL   Exclude the given file/folder; this option
+                         may be repeated.
+  -H or --hidden         Search hidden files and folders [default
+                         ignore hiddens].
+  -v or --verbose        Show progress [default don’t show progress].
+  -V or --version        Show version and quit.
+  -h or --help           Show this help and quit.
+</code></pre>
+
+<p>
+The <code>eg2.tcl</code> example is very similar.
+</p>
+
+<h3>Example: Store command line tool</h3>
+
+<h4><code>str -h</code> <i>or</i> <code>str --help</code></h4>
+
+<pre><code>
+usage: str SUBCOMMAND [OPTIONS] …
+
+Stores generational copies of specified files (excluding those
+explicitly ignored) in .dirname.str. (For a GUI run
+store.)
+
+SUBCOMMANDS:
+s or status       Report the store’s status.
+u or update       Create a new generation with an optional tag.
+a or add          Add the addable or the given files and folders.
+e or extract      Extract the specified files.
+p or print        Print the given file.
+c or copy         Copy a generation to the given folder.
+d or diff         Diff the given file.
+f or filenames    Print the list of tracked files.
+g or generations  Print the generations.
+G or gui          Start the gui.
+H or history      Print the given files’ list of generations.
+i or ignore       Add the given files/folders/globs to the ignore list.
+I or ignores      Print the list of files to ignore.
+U or unignore     Remove the given files/folders/globs from the ignore
+                  list.
+t or tag          Set or replace the tag for the current or given
+                  generation.
+untag             Untag the current or given generation.
+T or untracked    Print any untracked files.
+restore           Restore the specified files overwriting those on
+                  disk!
+C or clean        Clean the store by deleting empty generations.
+purge             Purge the given file from the store.
+h or help         Show full help.
+
+OPTIONS:
+  -v or --version  Show version and quit.
+  -h or --help     Show this help and quit. Use h or help for
+                   full help.
+
+@GID — @-prefixed generation number or tag name, (e.g., @28,
+@alpha1); if unspecified, the current generation is assumed.
+GLOB — when using globs for ignore or unignore use quotes to avoid
+shell expansion of glob characters (e.g., '*.o'). Subcommands that
+print output to stdour unless redirected by the shell. For help on a
+specific subcommand follow the subcommand with -h or --help or
+just use h or help for full help.
+</code></pre>
+
+<h4><code>str d -h</code> <i>or</i> <code>str diff --help</code></h4>
+
+<pre><code>
+usage: str diff [OPTIONS] &lt;@GID1&gt; [@GID2] <FILE>
+
+Diff the filename at @GID1 against the one in the current folder, or
+against the one stored at @GID2 if given; shows the entire file,
+unless quiet is specified when only differences and context lines are
+shown.
+
+POSITIONALS: 
+  @GID1 is the first generation; @GID2 is the second
+  generation [default current]; FILE is the file to diff at these
+  generations.
+
+OPTIONS:
+  -q or --quiet  Show the differences and some context only [default
+                 show the whole file].
+  -h or --help   Show diff help and quit.
+</code></pre>
+
+The <code>eg3.tcl</code> example is similar.
+
+<hr>
+</body>
+</html>
