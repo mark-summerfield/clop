@@ -3,6 +3,7 @@ clop.html
 
 tclop.tcl
 tclop-pos.tcl # positionals
+eg0.tcl # efind (cut down for clop.html)
 eg1.tcl # comparepdf
 eg2.tcl # efind
 eg3.tcl # str: s u a e p c d f g G H

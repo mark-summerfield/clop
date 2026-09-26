@@ -26,21 +26,47 @@ the end are some further <a href="#egs">Examples</a>.
 
 <b>Example</b>
 
+<p><i>Code:</i></p>
 <pre><code>
-set parser [clop::Parser new efind 1.0.0 1-255 \
+<b>package</b> require clop <i>3</i>
+
+<b>set</b> parser [clop::Parser new efind <i>1.0.0 1-255 \
     "Searches for files that match %bWHAT%!." "" \
     "%bWHAT%! is what to search for; %g%IDIR1 DIR2%! … are the\
-    folders to search \[default %B.%!\]."]
-$parser set_positional_names WHAT DIR
+    folders to search \[default %B.%!\]."</i>]
+$parser set_positional_names <i>WHAT DIR</i>
 $parser new_debug
-$parser new_bool c casesensitive "Respect case \[default %mignore case%!\]."
-$parser new_opt x exclude "" "Exclude the given file/folder; %Ithis\
-    option may be repeated%!." 1 EXCL
-$parser new_bool v verbose "Show progress \[default %mdon’t showprogress%!\]."
-$parser new_version V
+$parser new_bool <i>c casesensitive "Respect case \[default %mignore
+case%!\]."</i>
+$parser new_opt <i>x exclude "" "Exclude the given file/folder; %Ithis\
+    option may be repeated%!." 1 EXCL</i>
+$parser new_bool <i>v verbose "Show progress \[default %mdon’t
+showprogress%!\]."</i>
+$parser new_version <i>V</i>
 $parser new_help
-if {![llength $::argv]} { $parser on_help }
-set opts [$parser parse $::argv]
+<b>if</b> {![<b>llength</b> $::argv]} { $parser on_help }
+<b>set</b> opts [$parser parse $::argv]
+</code></pre>
+
+<p><i>Help output(</i><code>-h</code> <i>or</i> <code>--help</code>
+<i>option):</i></p>
+<pre><code>
+<i>usage:</i> <span style="color: blue;">efind</span> <i><span style="color:
+green;">[OPTIONS]</span></i> <span style="color: navy;">&lt;WHAT&gt;</span> <i><span style="color: green;">[DIR1 … [DIRn]]</span></i>
+
+Searches for files that match <span style="color: navy;">WHAT</span>.
+
+<i><span style="color: navy;">POSITIONALS:</span></i>
+  <span style="color: navy;">WHAT</span> is what to search for; <i><span style="color: green;">DIR1 DIR2 …</span></i> are the folders to search [default
+  <b>.</b>].
+
+<i><span style="color: green;">OPTIONS:</span></i>
+  <span style="color: green;">-c</span> <i>or</i> <span style="color: green;">--casesensitive</span>  Respect case [default <span style="color: magenta;">ignore case</span>].
+  <span style="color: green;">-x</span> <i>or</i> <span style="color:
+green;">--exclude</span> <i><span style="color: navy;">EXCL</span></i>   Exclude the given file/folder; this option may be repeated.
+  <span style="color: green;">-v</span> <i>or</i> <span style="color: green;">--verbose</span>        Show progress [default <span style="color: magenta;">don’t showprogress</span>].
+  <span style="color: green;">-V</span> <i>or</i> <span style="color: green;">--version</span>        Show version and quit.
+  <span style="color: green;">-h</span> <i>or</i> <span style="color: green;">--help</span>           Show this help and quit.
 </code></pre>
 
 <p>
@@ -438,8 +464,9 @@ See <code>eg[12].tcl</code> for basic examples of use, and
 subcommands. See <a
 href="https://github.com/mark-summerfield/altkey">altkey</a> for an
 example that uses configured values. The following examples have been
-redirected to files so color has been removed and they are wrapped at 72
-columns rather than the terminal width.
+redirected to files so highlighting (color, bold, italic) has been
+removed and they are wrapped at 72 columns rather than the terminal
+width.
 </p>
 
 <h3>Example: <code>efind.tcl -h</code> <i>or</i> <code>efind.tcl
