@@ -5,6 +5,9 @@ The clop module supports command line option parsing.
 The module is developed and tested on Linux and should work on any
 non-proprietary Unix.
 
+Note: I use [Store](https://github.com/mark-summerfield/store) for version
+control so github is only used to make the code public.
+
 ## Documentation
 
 See `clop.html`.
